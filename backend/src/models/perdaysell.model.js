@@ -1,0 +1,35 @@
+import mongoose, { Schema } from "mongoose";
+
+const perDaySellSchema = new mongoose.Schema(
+    {
+        restaurantId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Restaurant',
+            required: true
+        },
+        totalSell: {
+            type: Number,
+            required: true,
+            min: 0
+        },
+        profit: {
+            type: Number,
+            required: true,
+            min: 0
+        },
+        inventoryCost: {
+            type: Schema.Types.ObjectId,
+            ref: 'Inventory',
+            required: true,
+            min: 0
+        },
+        totalOrders: {
+            type: Number,
+            required: true,
+            min: 0
+        }
+    },
+    {
+        timestamps: true
+    }
+);
