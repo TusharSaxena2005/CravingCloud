@@ -113,4 +113,52 @@ const restaurantSchema = new Schema(
     }
 );
 
+restaurantSchema.pre("save", async function (next) {
+    if (this.isModified("managerPassword")) return next();
+    if (this.isModified("ownerPassword")) return next();
+    if (this.isModified("kitchenPassword")) return next();
+    this.managerPassword = await bcrypt.hash(this.managerPassword, 10);
+    this.ownerPassword = await bcrypt.hash(this.ownerPassword, 10);
+    this.kitchenPassword = await bcrypt.hash(this.kitchenPassword, 10);
+    next();
+});
+
+restaurantSchema.methods.comparePassword = async function (password, role) {
+    if (role === "manager") {
+        return await bcrypt.compare(password, this.managerPassword);
+    } else if (role === "owner") {
+        return await bcrypt.compare(password, this.ownerPassword);
+    } else if (role === "kitchen") {
+        return await bcrypt.compare(password, this.kitchenPassword);
+    }
+};
+
+restaurantSchema.methods.generateAccessToken = function () {
+    return jwt.sign(
+        {
+            _id: this._id,
+            name: this.name,
+            rollNo: this.rollNo,
+            email: this.email,
+            phone: this.phone
+        },
+        process.env.access_token_secret,
+        {
+            expiresIn: process.env.access_token_expiry
+        }
+    )
+}
+
+restaurantSchema.methods.generateRefreshToken = function () {
+    return jwt.sign(
+        {
+            _id: this._id,
+        },
+        process.env.refresh_token_secret,
+        {
+            expiresIn: process.env.refresh_token_expiry
+        }
+    )
+}
+
 export const Restaurant = mongoose.model("Restaurant", restaurantSchema);
