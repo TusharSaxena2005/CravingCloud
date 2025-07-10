@@ -33,3 +33,5 @@ const perDaySellSchema = new mongoose.Schema(
         timestamps: true
     }
 );
+
+export const PerDaySell = mongoose.model('PerDaySell', perDaySellSchema);

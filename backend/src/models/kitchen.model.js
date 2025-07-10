@@ -7,7 +7,14 @@ const kitchenSchema = new mongoose.Schema(
             ref: 'Restaurant',
             required: true
         },
+        order: {
+            type: Schema.Types.ObjectId,
+            ref: 'OrderHistory',
+            required: true
+        }
     },
     {
         timestamps: true
     });
+
+export const Kitchen = mongoose.model('Kitchen', kitchenSchema);

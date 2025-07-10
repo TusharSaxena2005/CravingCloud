@@ -36,9 +36,8 @@ const orderHistorySchema = new mongoose.Schema(
             enum: ['Pending', 'Completed', 'Cancelled'],
             default: 'Pending'
         },
-        type: {
-            type: String,
-            enum: ['Dine-in', 'Takeaway'],
+        tableNo: {
+            type: Number,
             required: true
         },
     },

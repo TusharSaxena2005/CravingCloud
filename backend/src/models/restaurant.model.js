@@ -38,6 +38,11 @@ const restaurantSchema = new Schema(
             unique: true,
             trim: true,
         },
+        gstTaxAmount: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
         logo: {
             type: String,
             required: true,
@@ -62,10 +67,46 @@ const restaurantSchema = new Schema(
             type: Boolean,
             default: true,
         },
-        minRewardAmount:{
+        minRewardAmount: {
             type: Number,
             default: 500,
-        }
+        },
+        staff: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Staff',
+            }
+        ],
+        menu: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Menu',
+            }
+        ],
+        inventory: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Inventory',
+            }
+        ],
+        orderHistory: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'OrderHistory',
+            }
+        ],
+        kitchen: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Kitchen',
+            }
+        ],
+        perDaySell: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'PerDaySell',
+            }
+        ]
     },
     {
         timestamps: true,
