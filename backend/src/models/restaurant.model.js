@@ -106,7 +106,15 @@ const restaurantSchema = new Schema(
                 type: Schema.Types.ObjectId,
                 ref: 'PerDaySell',
             }
-        ]
+        ],
+        refreshToken: {
+            type: String,
+            required: true,
+        },
+        accessToken: {
+            type: String,
+            required: true,
+        }
     },
     {
         timestamps: true,

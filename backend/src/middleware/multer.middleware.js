@@ -72,16 +72,16 @@ const fileFilter = (req, file, cb) => {
 const upload = smartStorage;
 
 // Middleware for single image upload
-export const uploadSingleImage = upload.single('image');
+const uploadSingleImage = upload.single('image');
 
 // Middleware for multiple image uploads
-export const uploadMultipleImages = upload.array('images', 10);
+const uploadMultipleImages = upload.array('images', 10);
 
 // For large files (use disk storage)
-export const uploadLargeImage = diskUpload.single('image');
+const uploadLargeImage = diskUpload.single('image');
 
 // Middleware for multiple fields with images
-export const uploadImageFields = upload.fields([
+const uploadImageFields = upload.fields([
   { name: 'profileImage', maxCount: 1 },
   { name: 'coverImage', maxCount: 1 },
   { name: 'menuImages', maxCount: 5 },
@@ -89,7 +89,7 @@ export const uploadImageFields = upload.fields([
 ]);
 
 // Error handling middleware for multer
-export const handleMulterError = (error, req, res, next) => {
+const handleMulterError = (error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return next(new ApiError(400, "File size too large. Maximum size is 5MB"));
@@ -103,3 +103,11 @@ export const handleMulterError = (error, req, res, next) => {
   }
   next(error);
 };
+
+export {
+  uploadSingleImage,
+  uploadMultipleImages,
+  uploadLargeImage,
+  uploadImageFields,
+  handleMulterError
+}
