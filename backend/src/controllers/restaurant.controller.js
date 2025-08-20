@@ -143,7 +143,7 @@ const getRestaurantById = asyncHandler(async (req, res) => {
     if (!name) {
         return new ApiError(400, "Restaurant name is required");
     }
-    const restaurant = await Restaurant.findMany({ name });
+    const restaurant = await Restaurant.findMany({ name }).select("-managerPassword -ownerPassword -kitchenPassword -refreshToken");
     if (!restaurant) {
         return new ApiError(404, "Restaurant not found");
     }
