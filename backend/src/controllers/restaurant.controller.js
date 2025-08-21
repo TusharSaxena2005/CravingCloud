@@ -2,6 +2,7 @@ import { Restaurant } from '../models/restaurant.model.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
+import { getStoragePathFromUrl } from '../utils/getStoragePath.js';
 import { uploadImageToFirebase, deleteImageFromFirebase } from '../utils/cloudStorage.js';
 import jwt from 'jsonwebtoken';
 import mongoose, { isValidObjectId } from "mongoose"
@@ -153,16 +154,126 @@ const getRestaurantById = asyncHandler(async (req, res) => {
 });
 
 // Change Restaurant details
-const changeRestaurantDetails = asyncHandler(async (req, res) => { });
+const changeRestaurantDetails = asyncHandler(async (req, res) => {
+    const { name, email, contact, address, gstTaxAmount, tables, isActive, minRewardAmount } = req.body;
+
+    if (!name && !email && !contact && !address && !gstTaxAmount && !tables && !isActive && !minRewardAmount) {
+        return new ApiError(400, "At least one field is required");
+    }
+
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+        req.restaurant._id,
+        {
+            $set: {
+                name,
+                email,
+                contact,
+                address,
+                gstTaxAmount,
+                tables,
+                isActive,
+                minRewardAmount
+            }
+        },
+        { new: true });
+
+    if (!updatedRestaurant) {
+        return new ApiError(404, "Restaurant not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Restaurant details updated successfully", updatedRestaurant));
+});
 
 // Change Restaurant logo
-const changeRestaurantLogo = asyncHandler(async (req, res) => { });
+const changeRestaurantLogo = asyncHandler(async (req, res) => {
+    const logo = req.files?.path;
+    if (!logo) {
+        return new ApiError(400, "Logo image is required");
+    }
 
-// Change Restaurant password
-const changeRestaurantPassword = asyncHandler(async (req, res) => { });
+    const logoPic = await uploadImageToFirebase(logo);
+
+    const currentPicUrl = await Restaurant.findById(req.restaurant._id).select("logo");
+
+    const currentPicPath = await getStoragePathFromUrl(currentPicUrl);
+
+    if (currentPicPath) {
+        await deleteImageFromFirebase(currentPicPath);
+    }
+
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+        req.restaurant._id,
+        {
+            $set: {
+                logo: logoPic.url
+            }
+        },
+        { new: true }
+    );
+
+    if (!updatedRestaurant) {
+        return new ApiError(404, "Restaurant not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Restaurant logo updated successfully", updatedRestaurant));
+});
+
+// Change Restaurant password 
+const changeRestaurantPassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword, role } = req.body;
+
+    if (!currentPassword || !newPassword) {
+        return new ApiError(400, "Current and new password are required");
+    }
+
+    if (currentPassword == newPassword) {
+        return new ApiError(400, "New password must be different from current password");
+    }
+
+    const restaurant = await Restaurant.findById(req.restaurant._id);
+    if (!restaurant) {
+        return new ApiError(404, "Restaurant not found");
+    }
+
+    const isMatch = await restaurant.comparePassword(currentPassword, role);
+    if (!isMatch) {
+        return new ApiError(401, "Current password is incorrect");
+    }
+
+    if (role == "manager") {
+        restaurant.managerPassword = newPassword;
+    } else if (role == "owner") {
+        restaurant.ownerPassword = newPassword;
+    } else if (role == "kitchen") {
+        restaurant.kitchenPassword = newPassword;
+    }
+
+    await restaurant.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Password updated successfully"));
+});
 
 // Delete Restaurant
-const deleteRestaurant = asyncHandler(async (req, res) => { });
+const deleteRestaurant = asyncHandler(async (req, res) => {
+    const restaurantLogo = await Restaurant.findById(req.restaurant._id).select("logo");
+    if (restaurantLogo) {
+        const currentPicPath = await getStoragePathFromUrl(restaurantLogo);
+        if (currentPicPath) {
+            await deleteImageFromFirebase(currentPicPath);
+        }
+    }
+
+    await Restaurant.findByIdAndDelete(req.restaurant._id);
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Restaurant deleted successfully"));
+});
 
 export {
     registerRestaurant,
