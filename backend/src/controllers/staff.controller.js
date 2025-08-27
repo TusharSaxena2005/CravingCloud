@@ -37,10 +37,51 @@ const addStaff = asyncHandler(async (req, res) => {
 })
 
 // Change Staff details
-const changeStaffDetails = asyncHandler(async (req, res) => { })
+const changeStaffDetails = asyncHandler(async (req, res) => {
+    const { staffId } = req.params;
+    if (!isValidObjectId(staffId)) {
+        throw new ApiError(400, "Invalid staff ID");
+    }
+
+    const { contact, email, role } = req.body;
+    if ([contact, email, role].some((fields) => fields.trim() === '')) {
+        throw new ApiError(400, "All fields are required");
+    }
+
+    const staff = await Staff.findByIdAndUpdate(staffId,
+        {
+            contact,
+            email,
+            role
+        },
+        { new: true }
+    );
+
+    if (!staff) {
+        throw new ApiError(500, "Failed to update staff");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Staff updated successfully", staff));
+})
 
 // Delete Staff
-const deleteStaff = asyncHandler(async (req, res) => { })
+const deleteStaff = asyncHandler(async (req, res) => {
+    const { staffId } = req.params;
+    if (!isValidObjectId(staffId)) {
+        throw new ApiError(400, "Invalid staff ID");
+    }
+
+    const staff = await Staff.findByIdAndDelete(staffId);
+    if (!staff) {
+        throw new ApiError(404, "Staff not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Staff deleted successfully", {}));
+})
 
 export {
     addStaff,
