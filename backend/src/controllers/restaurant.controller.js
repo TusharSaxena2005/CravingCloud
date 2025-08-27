@@ -138,6 +138,18 @@ const getCurrentRestaurantDetails = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, "Current restaurant details fetched successfully", req.restaurant));
 });
 
+// Get all Restaurant details
+const getAllRestaurants = asyncHandler(async (req, res) => {
+    const restaurants = await Restaurant.find().select("-managerPassword -ownerPassword -kitchenPassword -refreshToken");
+
+    if (!restaurants || restaurants.length == 0) {
+        return new ApiError(404, "No restaurants found");
+    }
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "All restaurant details fetched successfully", restaurants));
+});
+
 // Get Restaurant details by ID
 const getRestaurantById = asyncHandler(async (req, res) => {
     const { name } = req.params;
@@ -158,7 +170,7 @@ const changeRestaurantDetails = asyncHandler(async (req, res) => {
     const { name, email, contact, address, gstTaxAmount, tables, isActive, minRewardAmount } = req.body;
 
     if (!name && !email && !contact && !address && !gstTaxAmount && !tables && !isActive && !minRewardAmount) {
-        return new ApiError(400, "At least one field is required");
+        return new ApiError(400, "Atleast one field is required");
     }
 
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
@@ -280,6 +292,7 @@ export {
     loginRestaurant,
     logoutRestaurant,
     getCurrentRestaurantDetails,
+    getAllRestaurants,
     getRestaurantById,
     changeRestaurantDetails,
     changeRestaurantLogo,

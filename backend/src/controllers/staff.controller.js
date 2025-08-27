@@ -36,6 +36,44 @@ const addStaff = asyncHandler(async (req, res) => {
         .json(new ApiResponse(201, "Staff added successfully", staff));
 })
 
+// Get all staff
+const getAllStaff = asyncHandler(async (req, res) => {
+    const { restaurantId } = req.params;
+
+    if (!restaurantId || !isValidObjectId(restaurantId)) {
+        throw new ApiError(400, "Invalid restaurant ID");
+    }
+
+    const staff = await Staff.find({ restaurantId });
+
+    if (!staff || staff.length === 0) {
+        throw new ApiError(404, "No staff found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "All Staff details retrieved successfully", staff));
+})
+
+// Get staff details by id
+const getStaffDetailsByID = asyncHandler(async (req, res) => {
+    const { staffId } = req.params;
+
+    if (!staffId || !isValidObjectId(staffId)) {
+        throw new ApiError(400, "Invalid staff ID");
+    }
+
+    const staff = await Staff.findById(staffId);
+
+    if (!staff) {
+        throw new ApiError(404, "Staff not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Staff details retrieved successfully", staff));
+})
+
 // Change Staff details
 const changeStaffDetails = asyncHandler(async (req, res) => {
     const { staffId } = req.params;
@@ -44,8 +82,8 @@ const changeStaffDetails = asyncHandler(async (req, res) => {
     }
 
     const { contact, email, role } = req.body;
-    if ([contact, email, role].some((fields) => fields.trim() === '')) {
-        throw new ApiError(400, "All fields are required");
+    if (!contact && !email && !role) {
+        throw new ApiError(400, "Atleast one field is required");
     }
 
     const staff = await Staff.findByIdAndUpdate(staffId,
@@ -85,6 +123,8 @@ const deleteStaff = asyncHandler(async (req, res) => {
 
 export {
     addStaff,
+    getAllStaff,
+    getStaffDetailsByID,
     changeStaffDetails,
     deleteStaff
 }
