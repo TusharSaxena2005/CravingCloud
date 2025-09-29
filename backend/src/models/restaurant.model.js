@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { ref } from "process";
 
 const restaurantSchema = new Schema(
     {
@@ -59,10 +60,6 @@ const restaurantSchema = new Schema(
             type: String,
             required: true,
         },
-        tables: {
-            type: Number,
-            required: true,
-        },
         isActive: {
             type: Boolean,
             default: true,
@@ -71,6 +68,12 @@ const restaurantSchema = new Schema(
             type: Number,
             default: 500,
         },
+        tables: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Table',
+            }
+        ],
         staff: [
             {
                 type: Schema.Types.ObjectId,

@@ -23,9 +23,9 @@ const generateAccessAndRefreshToken = async (restaurant) => {
 
 // Create Restaurant
 const registerRestaurant = asyncHandler(async (req, res) => {
-    const { gstNo, code, name, email, contact, address, gstTaxAmount, managerPassword, ownerPassword, kitchenPassword, tables, isActive, minRewardAmount } = req.body;
+    const { gstNo, code, name, email, contact, address, gstTaxAmount, managerPassword, ownerPassword, kitchenPassword, isActive, minRewardAmount } = req.body;
 
-    if ([gstNo, code, name, email, contact, address, gstTaxAmount, managerPassword, ownerPassword, kitchenPassword, tables, isActive, minRewardAmount].some((field) => field?.trim() === "")) {
+    if ([gstNo, code, name, email, contact, address, gstTaxAmount, managerPassword, ownerPassword, kitchenPassword, isActive, minRewardAmount].some((field) => field?.trim() === "")) {
         return new ApiError(400, "All fields are required");
     }
 
@@ -52,7 +52,6 @@ const registerRestaurant = asyncHandler(async (req, res) => {
         managerPassword,
         ownerPassword,
         kitchenPassword,
-        tables,
         isActive,
         minRewardAmount,
         accessToken,
@@ -167,9 +166,9 @@ const getRestaurantById = asyncHandler(async (req, res) => {
 
 // Change Restaurant details
 const changeRestaurantDetails = asyncHandler(async (req, res) => {
-    const { name, email, contact, address, gstTaxAmount, tables, isActive, minRewardAmount } = req.body;
+    const { name, email, contact, address, gstTaxAmount, isActive, minRewardAmount } = req.body;
 
-    if (!name && !email && !contact && !address && !gstTaxAmount && !tables && !isActive && !minRewardAmount) {
+    if (!name && !email && !contact && !address && !gstTaxAmount && !isActive && !minRewardAmount) {
         return new ApiError(400, "Atleast one field is required");
     }
 
@@ -182,7 +181,6 @@ const changeRestaurantDetails = asyncHandler(async (req, res) => {
                 contact,
                 address,
                 gstTaxAmount,
-                tables,
                 isActive,
                 minRewardAmount
             }

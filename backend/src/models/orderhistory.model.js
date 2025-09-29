@@ -37,7 +37,8 @@ const orderHistorySchema = new mongoose.Schema(
             default: 'Pending'
         },
         tableNo: {
-            type: Number,
+            type:Schema.Types.ObjectId,
+            ref: 'Table',
             required: true
         },
     },
