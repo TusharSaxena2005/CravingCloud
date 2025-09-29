@@ -33,7 +33,7 @@ const orderHistorySchema = new mongoose.Schema(
         ],
         status: {
             type: String,
-            enum: ['Pending', 'Completed', 'Cancelled'],
+            enum: ['Pending', 'Baking', 'Completed', 'Cancelled'],
             default: 'Pending'
         },
         tableNo: {
