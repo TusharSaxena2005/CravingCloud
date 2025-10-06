@@ -82,6 +82,27 @@ const getItemById = asyncHandler(async (req, res) => {
         )
 })
 
+// Get item by filter
+const getItemByFilter = asyncHandler(async (req, res) => {
+    const { name, category, isVeg } = req.query;
+    const filter = {};
+    if (name) {
+        filter.name = { $regex: name, $options: "i" };
+    }
+    if (category) {
+        filter.category = category;
+    }
+    if (isVeg !== undefined) {
+        filter.isVeg = isVeg;
+    }
+
+    const menuItems = await Menu.find(filter);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Items retrieved successfully", menuItems));
+});
+
 // Update item by ID
 const updateItemDetails = asyncHandler(async (req, res) => {
     const { itemId } = req.params;
@@ -210,6 +231,7 @@ export {
     addItem,
     getAllItems,
     getItemById,
+    getItemByFilter,
     updateItemDetails,
     updateItemImage,
     toggleItemStatus,

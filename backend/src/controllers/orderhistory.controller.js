@@ -84,6 +84,22 @@ const getOrderById = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, "Order retrieved successfully", order));
 });
 
+// Get order by status
+const getOrderByStatus = asyncHandler(async (req, res) => {
+    const { status } = req.query;
+    if (!status) {
+        return new ApiError("Status query parameter is required", 400);
+    }
+    const validStatuses = ['Pending', 'Baking', 'Completed', 'Cancelled'];
+    if (!validStatuses.includes(status)) {
+        return new ApiError("Invalid status value", 400);
+    }
+    const orders = await OrderHistory.find({ status });
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Orders retrieved successfully", orders));
+});
+
 // Update order status
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -121,6 +137,7 @@ export {
     createOrder,
     getAllOrders,
     getOrderById,
+    getOrderByStatus,
     updateOrderStatus,
     clearOrderHistory
 };

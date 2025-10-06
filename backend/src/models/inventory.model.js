@@ -2,23 +2,25 @@ import mongoose, { Schema } from 'mongoose';
 
 const inventorySchema = new mongoose.Schema(
     {
-        inventoryDescription: {
-            itemName: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            price: {
-                type: Number,
-                required: true,
-                min: 0
-            },
-            weight: {
-                type: Number,
-                required: true,
-                min: 0
+        inventoryDescription: [
+            {
+                itemName: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                price: {
+                    type: Number,
+                    required: true,
+                    min: 0
+                },
+                weight: {
+                    type: Number,
+                    required: true,
+                    min: 0
+                }
             }
-        },
+        ],
         totalCost: {
             type: Number,
             required: true,
