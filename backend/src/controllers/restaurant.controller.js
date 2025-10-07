@@ -4,8 +4,6 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
 import { getStoragePathFromUrl } from '../utils/getStoragePath.js';
 import { uploadImageToFirebase, deleteImageFromFirebase } from '../utils/cloudStorage.js';
-import jwt from 'jsonwebtoken';
-import mongoose, { isValidObjectId } from "mongoose"
 
 const generateAccessAndRefreshToken = async (restaurant) => {
     try {

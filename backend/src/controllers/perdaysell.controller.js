@@ -90,7 +90,7 @@ const createPerDaySell = asyncHandler(async (req, res) => {
                 totalOrders
             },
             { new: true }
-        ).populate('restaurantId', 'name address');
+        );
     } else {
         // Create new record
         perDaySell = await PerDaySell.create({
@@ -101,7 +101,7 @@ const createPerDaySell = asyncHandler(async (req, res) => {
             totalOrders
         });
 
-        perDaySell = await PerDaySell.findById(perDaySell._id).populate('restaurantId', 'name address');
+        perDaySell = await PerDaySell.findById(perDaySell._id);
     }
 
     res.status(201).json(new ApiResponse(201, 'Per day sell record created/updated successfully', {
@@ -236,7 +236,7 @@ const getAllPerDaySellRecords = asyncHandler(async (req, res) => {
         .limit(parseInt(limit));
 
     const totalRecords = await PerDaySell.countDocuments({ restaurantId });
-    
+
     return res
         .status(200)
         .json(new ApiResponse(200, 'All per day sell records retrieved successfully', {
