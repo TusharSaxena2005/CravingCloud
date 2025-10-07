@@ -18,8 +18,7 @@ const perDaySellSchema = new mongoose.Schema(
             min: 0
         },
         inventoryCost: {
-            type: Schema.Types.ObjectId,
-            ref: 'Inventory',
+            type: Number,
             required: true,
             min: 0
         },
