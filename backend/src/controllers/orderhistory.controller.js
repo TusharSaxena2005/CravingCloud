@@ -115,6 +115,12 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     if (!order) {
         return new ApiError("Order not found", 404);
     }
+
+    // If order is completed or cancelled, remove it from kitchen
+    if (status === 'Completed' || status === 'Cancelled') {
+        await Kitchen.findOneAndDelete({ order: order._id });
+    }
+
     return res
         .status(200)
         .json(new ApiResponse(200, "Order status updated successfully", order));

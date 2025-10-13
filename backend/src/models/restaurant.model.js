@@ -148,9 +148,8 @@ restaurantSchema.methods.generateAccessToken = function () {
         {
             _id: this._id,
             name: this.name,
-            rollNo: this.rollNo,
             email: this.email,
-            phone: this.phone
+            contact: this.contact
         },
         process.env.access_token_secret,
         {
