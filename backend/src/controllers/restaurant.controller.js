@@ -57,7 +57,7 @@ const registerRestaurant = asyncHandler(async (req, res) => {
         logo: logoPic.url
     });
 
-    const { accessToken, refreshToken } = generateTokens(restaurant);
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(restaurant);
 
     const options = {
         httpOnly: true,
